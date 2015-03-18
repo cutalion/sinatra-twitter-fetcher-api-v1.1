@@ -1,20 +1,21 @@
 require 'sinatra'
-require 'sinatra/jsonp'
+require 'json'
 require 'rubygems'
 require 'twitter'
 
 class TwitterFetcher < Sinatra::Base
-  helpers Sinatra::Jsonp
-
   @@twitter_client = Twitter::Client.new(
-    :consumer_key       => 'YOUR-CONSUMER-KEY-JUNX',
-    :consumer_secret    => 'YOUR-CONSUMER-SECRET-JUNX',
-    :oauth_token        => 'YOUR-OAUTH-TOKEN-JUNX',
-    :oauth_token_secret => 'YOUR-OAUTH-TOKEN-SECRET-JUNX',
+    :consumer_key       => ENV['TWITTER_CONSUMER_KEY'],
+    :consumer_secret    => ENV['TWITTER_CONSUMER_SECRET'],
+    :oauth_token        => ENV['TWITTER_OAUTH_TOKEN'],
+    :oauth_token_secret => ENV['TWITTER_OAUTH_TOKEN_SECRET'],
   )
 
-  get '/' do
-    jsonp @@twitter_client.home_timeline.map(&:attrs)
+  before do
+    content_type 'application/json'
   end
 
+  get '/users/show' do
+    @@twitter_client.user(params[:screen_name]).attrs.to_json
+  end
 end
