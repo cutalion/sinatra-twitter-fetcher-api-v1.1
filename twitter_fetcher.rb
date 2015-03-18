@@ -16,6 +16,8 @@ class TwitterFetcher < Sinatra::Base
   end
 
   get '/users/show' do
+    pass if params[:screen_name].to_s.strip.empty?
+
     @@twitter_client.user(params[:screen_name]).attrs.to_json
   end
 end
